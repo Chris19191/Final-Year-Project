@@ -1,0 +1,369 @@
+[
+    {
+        "id": "ecb85b2decfe6a81",
+        "type": "tab",
+        "label": "Flow 1",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "c56bb91ec303073c",
+        "type": "file",
+        "z": "ecb85b2decfe6a81",
+        "name": "",
+        "filename": "C:\\Users\\Admin\\OneDrive\\Documents\\FYP Code\\EEGdata.csv",
+        "appendNewline": true,
+        "createDir": true,
+        "overwriteFile": "false",
+        "encoding": "none",
+        "x": 1410,
+        "y": 660,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "e1f41742ca4aa3b6",
+        "type": "join",
+        "z": "ecb85b2decfe6a81",
+        "name": "",
+        "mode": "custom",
+        "build": "array",
+        "property": "payload",
+        "propertyType": "msg",
+        "key": "topic",
+        "joiner": "\\n",
+        "joinerType": "str",
+        "accumulate": false,
+        "timeout": "",
+        "count": "3",
+        "reduceRight": false,
+        "reduceExp": "",
+        "reduceInit": "",
+        "reduceInitType": "",
+        "reduceFixup": "",
+        "x": 750,
+        "y": 380,
+        "wires": [
+            [
+                "95bcfc7634fa7440",
+                "2fcff5b004ba1b0c"
+            ]
+        ]
+    },
+    {
+        "id": "95bcfc7634fa7440",
+        "type": "debug",
+        "z": "ecb85b2decfe6a81",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1050,
+        "y": 380,
+        "wires": []
+    },
+    {
+        "id": "2fcff5b004ba1b0c",
+        "type": "csv",
+        "z": "ecb85b2decfe6a81",
+        "name": "",
+        "sep": ",",
+        "hdrin": "",
+        "hdrout": "none",
+        "multi": "one",
+        "ret": "\\n",
+        "temp": "Time, Relax, Stress",
+        "skip": "0",
+        "strings": true,
+        "include_empty_strings": false,
+        "include_null_values": "",
+        "x": 890,
+        "y": 500,
+        "wires": [
+            [
+                "460ca192d2e38023"
+            ]
+        ]
+    },
+    {
+        "id": "e0d5c6fea5f517b8",
+        "type": "inject",
+        "z": "ecb85b2decfe6a81",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "1",
+        "crontab": "",
+        "once": true,
+        "onceDelay": 0.1,
+        "topic": "Time",
+        "payload": "",
+        "payloadType": "date",
+        "x": 450,
+        "y": 1460,
+        "wires": [
+            [
+                "d9bab0b69f98a8b3"
+            ]
+        ]
+    },
+    {
+        "id": "d9bab0b69f98a8b3",
+        "type": "moment",
+        "z": "ecb85b2decfe6a81",
+        "name": "",
+        "topic": "",
+        "input": "",
+        "inputType": "msg",
+        "inTz": "Europe/London",
+        "adjAmount": 0,
+        "adjType": "days",
+        "adjDir": "add",
+        "format": "HH:mm:ss DD/MM",
+        "locale": "en-GB",
+        "output": "",
+        "outputType": "msg",
+        "outTz": "Europe/London",
+        "x": 700,
+        "y": 1460,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "13a0d47adc713036",
+        "type": "EMOTIV",
+        "z": "ecb85b2decfe6a81",
+        "name": "EMOTIV",
+        "x": 80,
+        "y": 160,
+        "wires": [
+            [
+                "ed97e43b77d94423",
+                "45b672de37de0328"
+            ]
+        ]
+    },
+    {
+        "id": "a41618beab8f9e9c",
+        "type": "Profile-Name",
+        "z": "ecb85b2decfe6a81",
+        "name": "Profile Name",
+        "profileName": "",
+        "x": 200,
+        "y": 1460,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "ed97e43b77d94423",
+        "type": "Performance-Metric",
+        "z": "ecb85b2decfe6a81",
+        "name": "Performance Metrics",
+        "pm": "relaxation",
+        "x": 350,
+        "y": 260,
+        "wires": [
+            [
+                "d813cecab40e5f8d",
+                "e1f41742ca4aa3b6"
+            ]
+        ]
+    },
+    {
+        "id": "45b672de37de0328",
+        "type": "Performance-Metric",
+        "z": "ecb85b2decfe6a81",
+        "name": "Performance Metrics",
+        "pm": "stress",
+        "x": 340,
+        "y": 320,
+        "wires": [
+            [
+                "e1f41742ca4aa3b6"
+            ]
+        ]
+    },
+    {
+        "id": "b2e750fac2d64a36",
+        "type": "change",
+        "z": "ecb85b2decfe6a81",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "topic",
+                "pt": "msg",
+                "to": "Relax",
+                "tot": "str"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 950,
+        "y": 1460,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "41a3de87a98c953d",
+        "type": "change",
+        "z": "ecb85b2decfe6a81",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "topic",
+                "pt": "msg",
+                "to": "Stress",
+                "tot": "str"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 950,
+        "y": 1500,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "d813cecab40e5f8d",
+        "type": "function",
+        "z": "ecb85b2decfe6a81",
+        "name": "",
+        "func": "var d = new Date();\ntime = d.getTime();\nmsg.payload = time;\nmsg.topic = \"time\"\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 600,
+        "y": 260,
+        "wires": [
+            [
+                "e1f41742ca4aa3b6"
+            ]
+        ]
+    },
+    {
+        "id": "460ca192d2e38023",
+        "type": "function",
+        "z": "ecb85b2decfe6a81",
+        "name": "",
+        "func": "msg.payload=msg.payload.trim()\nif(msg.payload)\n    return msg",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1060,
+        "y": 580,
+        "wires": [
+            [
+                "c56bb91ec303073c"
+            ]
+        ]
+    },
+    {
+        "id": "e6bd5cd858fae203",
+        "type": "comment",
+        "z": "ecb85b2decfe6a81",
+        "name": "Strip new line from message",
+        "info": "",
+        "x": 1120,
+        "y": 540,
+        "wires": []
+    },
+    {
+        "id": "a8551a19f625a181",
+        "type": "comment",
+        "z": "ecb85b2decfe6a81",
+        "name": "Put into .csv format",
+        "info": "",
+        "x": 930,
+        "y": 460,
+        "wires": []
+    },
+    {
+        "id": "0538a0f31bd5354c",
+        "type": "comment",
+        "z": "ecb85b2decfe6a81",
+        "name": "Get Emotiv Performance metrics",
+        "info": "",
+        "x": 350,
+        "y": 220,
+        "wires": []
+    },
+    {
+        "id": "3bf8de15e5445d65",
+        "type": "comment",
+        "z": "ecb85b2decfe6a81",
+        "name": "Connect to Emotiv app",
+        "info": "",
+        "x": 120,
+        "y": 120,
+        "wires": []
+    },
+    {
+        "id": "b1140f53e772c244",
+        "type": "comment",
+        "z": "ecb85b2decfe6a81",
+        "name": "Get unix time (ms)",
+        "info": "",
+        "x": 630,
+        "y": 220,
+        "wires": []
+    },
+    {
+        "id": "80bca62ebe64fb93",
+        "type": "comment",
+        "z": "ecb85b2decfe6a81",
+        "name": "Join messages into array",
+        "info": "",
+        "x": 810,
+        "y": 340,
+        "wires": []
+    },
+    {
+        "id": "58f8b43901f8e6eb",
+        "type": "comment",
+        "z": "ecb85b2decfe6a81",
+        "name": "Debug node",
+        "info": "",
+        "x": 1050,
+        "y": 340,
+        "wires": []
+    },
+    {
+        "id": "dc4fe3154da5e62c",
+        "type": "comment",
+        "z": "ecb85b2decfe6a81",
+        "name": "Write to file",
+        "info": "",
+        "x": 1240,
+        "y": 620,
+        "wires": []
+    }
+]
