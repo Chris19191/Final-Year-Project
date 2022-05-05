@@ -42,7 +42,7 @@ ser.flushInput()  # instruct serial port to clear queue
 
 with open("%s.csv" % starttime, "a") as fOut:  # create csv file
 	writer = csv.writer(fOut, delimiter=",")
-	writer.writerow(["Arduino Time", "Steps", "Walk State", "IR", "BPM", "HRV", "Temp", "Relax", "Stress"])
+	writer.writerow(["Arduino Time", "Arduino Unix Time", "Steps", "Walk State", "IR", "BPM", "HRV", "Temp", "Relax", "Stress"])
 
 while True:
 	unix_time = time.time()  # Get system UNIX time
@@ -84,21 +84,23 @@ while True:
 			last_line = lines[-1]  # take the 2nd to last line
 			EEG_data = last_line.split(",")  # split line using , as delimiter
 			EEG_time = int(EEG_data[2])  # Assign 3rd item in list to variable 'EEG_time'
-			if (unix_time * 1000) - EEG_time < 10000:
+			# check that the data was saved within the last 10 seconds
+			if (unix_time * 1000) - EEG_time < 10010:
 				relax = EEG_data[0]  # Assign 1st item in list to variable 'relax'
 				stress = EEG_data[1]  # Assign 2nd item in list to variable 'stress'
 			else:
-				relax = "NO DATA"
+				relax = "NO DATA"  # Write no data warning to file
 				stress = "NO DATA"
 
-
+		# Print warning message if finger is not detected on sensor
 		if IR < 50000:
 			print("No finger detected!")
 
-		# Fill arrays
+		# Initialise arrays with first 200 values
 		if counter < 200:
 			IR_Arr[counter] = IR  # add IR values to IR array
 			time_Arr[counter] = arduino_time  # add timestamp values to timestamp array
+		# Replace the oldest value in array with new value
 		else:
 			IR_Arr = np.roll(IR_Arr, -1)  # shift data in array
 			IR_Arr[199] = IR  # add new value to first element
@@ -107,13 +109,13 @@ while True:
 			time_Arr[199] = arduino_time
 
 		# if time_Arr[99]:
-		if counter > 250:
+		if counter > 200:
 			peaks = find_peaks(IR_Arr, height=10000, threshold=None, prominence=500)
 			height = peaks[1]['peak_heights']  # list of the heights of the peaks
 			peak_pos = time_Arr[peaks[0]]  # list of the peaks positions
 
-			# plot data
-			if counter == 251:
+			# plot data (only for debug)
+			if counter < 1:
 				fig = plt.figure()
 				ax = fig.subplots()
 				ax.plot(time_Arr, IR_Arr)
@@ -156,12 +158,15 @@ while True:
 				HRV_sum = HRV_sum + x
 			Avg = HRV_sum / (len(IBI_Arr_diff))
 			HRV = round(Avg ** 0.5)
-			print("HRV: ", end='')
-			print(HRV)
+			#print("HRV: ", end='')
+			#print(HRV)
+
+			# Open file to save data into
+			with open("%s.csv" % starttime, "a", newline='') as fOut:  # create csv file
+				writer = csv.writer(fOut, delimiter=",")
+				# write collected data to file
+				writer.writerow([arduino_time, arduino_unix_time, steps, walkState, IR, BPM, HRV, temp, relax, stress])
 
 		counter += 1
 
-		# Open file to save data into
-		with open("%s.csv" % starttime, "a", newline='') as fOut:  # create csv file
-			writer = csv.writer(fOut, delimiter=",")
-			writer.writerow([arduino_time, steps, walkState, IR, BPM, HRV, temp, relax, stress])  # write collected data to file
+
